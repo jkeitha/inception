@@ -5,7 +5,7 @@ RUN		apt-get -y install vim
 COPY	/conf/nginx.conf /etc/nginx/sites-available/default
 #generation key and cert:
 RUN openssl req -newkey rsa:2048 -nodes -x509 -days 365 \
-	-subj "/C=RU/ST=Moscow/L=Moscow/O=bcherie/CN=bcherie.42.fr" \
+	-subj "/C=RU/ST=Moscow/L=Moscow/O=jkeitha/CN=jkeitha.42.fr" \
 	-keyout etc/ssl/key.key  \
 	-out etc/ssl/cert.cert
 
