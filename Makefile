@@ -1,6 +1,6 @@
 build:
-	sudo mkdir /home/qcesar/data/db
-	sudo mkdir /home/qcesar/data/wp
+	sudo mkdir /home/jkeitha/data/db
+	sudo mkdir /home/jkeitha/data/wp
 	docker-compose -f src/docker-compose.yml up  --build
 start:
 	docker-compose -f src/docker-compose.yml start 
@@ -30,8 +30,8 @@ ifneq  (,$(docker network ls -q))
 endif
 	sudo docker system prune -a --force
 	sudo docker system prune -a --volumes
-	sudo rm -Rf /home/qcesar/data/db
-	sudo rm -Rf /home/qcesar/data/wp
+	sudo rm -Rf /home/jkeitha/data/db
+	sudo rm -Rf /home/jkeitha/data/wp
 
 re: fclean 
 	docker-compose -f src/docker-compose.yml up --build
