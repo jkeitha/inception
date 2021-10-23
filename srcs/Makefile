@@ -1,5 +1,7 @@
 all:
 	docker-compose -f srcs/docker-compose.yaml up --build -d
+logs:
+	docker-compose logs
 
 clean:
 	docker stop $$(docker ps -a -q)
