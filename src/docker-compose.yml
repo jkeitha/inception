@@ -44,14 +44,14 @@ volumes:
         driver_opts: 
             type: none
             o: bind
-            device: /home/qcesar/data/wp
+            device: /home/jkeitha/data/wp
     db:
         driver: local
         name: db
         driver_opts: 
             type: none
             o: bind
-            device: /home/qcesar/data/db
+            device: /home/jkeitha/data/db
 networks: 
     qcesar_network:
         name: qcesar_network
