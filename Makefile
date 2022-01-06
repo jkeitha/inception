@@ -1,4 +1,5 @@
 all:
+	mkdir
 	docker-compose -f srcs/docker-compose.yaml up --build -d
 
 clean:
@@ -8,3 +9,8 @@ clean:
 
 vclean:
 	docker volume rm $$(docker volume ls -q)
+
+mkdir:
+	mkdir -p /home/anastasia/data/
+	mkdir -p /home/anastasia/data/wordpress
+	mkdir -p /home/anastasia/data/mariadb
