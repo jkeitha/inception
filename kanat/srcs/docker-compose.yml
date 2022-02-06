@@ -1,0 +1,140 @@
+version: "3.9"
+services:
+    nginx:
+        restart: always
+        build:
+            context: ./requirements/nginx
+            dockerfile: Dockerfile
+            args:
+                - NGINX_USER=${NGINX_USER}
+                - NGINX_PASSWORD=${NGINX_PASSWORD}
+        container_name: nginx-container
+        networks: 
+            - "inception"
+        ports:
+            - "${NGINX_HOST}:${NGINX_CONTAINER}"
+        volumes:
+            - wp_data:/var/www/wordpress
+    wordpress:
+        environment:
+            WP_USER: ${WP_USER}
+            WP_PASSWORD: ${WP_PASSWORD}
+            WP_EMAIL: ${WP_EMAIL}
+        restart: always
+        build:
+            context: ./requirements/wordpress
+            dockerfile: Dockerfile
+        container_name: wordpress-container
+        networks: 
+            - "inception"
+        volumes:
+            - wp_data:/var/www/wordpress
+    mariadb:
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        restart: always
+        build:
+            context: ./requirements/mariadb
+            dockerfile: Dockerfile
+        container_name: mariadb-container
+        networks: 
+            - "inception"
+        volumes:
+            - db_data:/var/lib/mysql
+    
+#---------------------BONUS--------------------#
+
+    ftp:
+        restart: always
+        build:
+            context: ./requirements/bonus/ftp
+            dockerfile: Dockerfile
+            args:
+                - FTP_USER=${FTP_USER}
+                - FTP_PASSWORD=${FTP_PASSWORD}
+        container_name: ftp-container
+        networks: 
+            - "inception"
+        ports:
+            - "${FTP_TRANSFER_PORT_HOST}:${FTP_TRANSFER_PORT_CONTAINER}"
+            - "${FTP_CONECTION_PORT_HOST}:${FTP_CONECTION_PORT_CONTAINER}"
+            - "${FTP_PASSIVE_PORT_HOST}:${FTP_PASSIVE_PORT_CONTAINER}"
+        volumes:
+            - wp_data:/home/jkeitha/
+    adminer:
+        restart: always
+        build:
+            context: ./requirements/bonus/adminer
+            dockerfile: Dockerfile
+        container_name: adminer-container
+        networks: 
+            - "inception"
+    redis:
+        restart: always
+        build: 
+            context: ./requirements/bonus/redis
+            dockerfile: Dockerfile
+        container_name: redis-container
+        networks: 
+            - "inception"
+    influxdb:
+        restart: always
+        build:
+            context: ./requirements/bonus/influxdb
+            dockerfile: Dockerfile
+        container_name: influxdb-container
+        networks: 
+            - "inception"
+    grafana:
+        restart: always
+        build:
+            context: ./requirements/bonus/grafana
+            dockerfile: Dockerfile
+        container_name: grafana-container
+        networks: 
+            - "inception"
+        ports:
+            - "${GRAFANA_HOST}:${GRAFANA_CONTAINER}"
+    telegraf:
+        restart: always
+        build:
+            context: ./requirements/bonus/telegraf
+            dockerfile: Dockerfile
+        container_name: telegraf-container
+        networks: 
+            - "inception"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+    my-site:
+        restart: always
+        build:
+            context: ./requirements/bonus/my-site
+            dockerfile: Dockerfile
+        container_name: my-site-container
+        networks: 
+            - "inception"
+        environment:
+            - MY_SITE_CONTAINER=${MY_SITE_CONTAINER}
+        ports:
+            - ${MY_SITE_HOST}:${MY_SITE_CONTAINER}
+volumes:
+    db_data:
+        name: db_data
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /home/${USERNAME}/data/db_data
+    wp_data:
+        name: wp_data
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: /home/${USERNAME}/data/wp_data
+networks:
+    inception:
+        name: "inception"
