@@ -1,17 +1,14 @@
-FROM	debian:buster
-RUN		apt-get update -y && apt-get -y install nginx vim net-tools
-RUN		apt-get -y install openssl
-RUN		apt-get -y install vim
-COPY	/conf/nginx.conf /etc/nginx/sites-available/default
-#generation key and cert:
-RUN openssl req -newkey rsa:2048 -nodes -x509 -days 365 \
-	-subj "/C=RU/ST=Moscow/L=Moscow/O=jkeitha/CN=jkeitha.42.fr" \
-	-keyout etc/ssl/key.key  \
-	-out etc/ssl/cert.cert
-
-RUN		chown -R www-data /var/www/*
-RUN		chmod 777 /etc/ssl/*
-EXPOSE	443
-VOLUME	/var/www/wordpress
-
-CMD		["nginx","-g","daemon off;"]
+FROM alpine
+ARG NGINX_USER
+ARG NGINX_USER_PASSWORD
+RUN apk add nginx openssl bash curl
+COPY ./conf/custom.conf /etc/nginx/nginx.conf
+RUN mkdir /etc/nginx/ssl
+RUN adduser -D "${NGINX_USER}"; echo "${NGINX_USER}:{NGINX_USER_PASSWORD}" | chpasswd ;
+RUN mkdir /var/www/adminer
+COPY ./conf/init.sh ./
+COPY ./conf/adminer.php ./var/www/adminer/index.php
+RUN openssl req -x509 -nodes -days 365 -newkey \
+    rsa:2048 -keyout /etc/nginx/ssl/jkeitha.key -out /etc/nginx/ssl/jkeitha.crt -subj \
+    "/C=RF/ST=Moscow/L=Moscow/O=school21/OU=jkeitha_42/CN=jkeitha_42"
+CMD ["bash", "init.sh"]

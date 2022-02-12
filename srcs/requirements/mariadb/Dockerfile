@@ -1,11 +1,9 @@
-FROM	debian:buster
-RUN		apt-get update -y && apt-get -y install mariadb-server curl vim net-tools
+FROM debian:buster
+RUN apt-get update &&  apt-get -y install mariadb-server bash procps
 
-COPY	/conf/50-server.cnf /etc/mysql/mariadb.conf.d/
-RUN		chmod 444 /etc/mysql/mariadb.conf.d/50-server.cnf
+COPY ./conf/init_db.sh .
+COPY ./conf/wordpress.sql .
+COPY ./conf/my.cnf /etc/mysql/my.cnf
 
-COPY	/tools/start.sh /
-EXPOSE	3306
-
-RUN		chmod 755 /start.sh
-ENTRYPOINT	["bash", "/start.sh"]
+RUN chmod u+x init_db.sh
+CMD [ "./init_db.sh" ]

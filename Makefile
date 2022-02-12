@@ -1,16 +1,10 @@
+
+.PHONY: all clean fclean re
+
 all:
-	mkdir
-	docker-compose -f srcs/docker-compose.yaml up --build -d
-
+	docker-compose  -f ./srcs/docker-compose.yml --env-file ./srcs/.env up --build -d 
 clean:
-	docker stop $$(docker ps -a -q)
-	docker container prune
-	docker image prune -a
-
-vclean:
-	docker volume rm $$(docker volume ls -q)
-
-mkdir:
-	mkdir -p /home/anastasia/data/
-	mkdir -p /home/anastasia/data/wordpress
-	mkdir -p /home/anastasia/data/mariadb
+	docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env down 
+fclean: clean
+	docker system prune -f -a --volumes
+re: fclean all
